@@ -1,0 +1,15 @@
+td {
+	border: 1px black solid;
+	height:auto;
+	width:auto;
+}
+
+.hover {
+	background-color:red;
+}
+
+table {
+	border-collapse:collapse;
+	width: 500px;
+	height: 500px;
+}

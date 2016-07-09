@@ -1,0 +1,99 @@
+1. Organizing the 16-by-grid
+
+The first way I tried:
+	Place all the divs within a container div, and change the dimensions of the container div until the inner divs organize themselves into the desired 16-by-16 grid.
+
+	This involves changing the display property of the divs to inline-block.
+
+Problem with the first way:
+	It doesn't scale well. It's hard to add more divs and get a consistent behaviour.
+
+Second way:
+	Float all divs left. Find the divs that should be the first member of each 16-div row. Apply the clear:left property to these divs.
+		- NOTE: the clear property says, DO NOT put floated elements either to the left of, the right of, or both the left of and the right of, this element (with the clear property).
+
+	This way we can add divs and still get a consistent behaviour, as long as we continue to the first member of each #-div row.
+		- I did this using an if statement and the modulo operator.
+
+
+Third way:
+	Using tables. Still need to figure this one out.
+
+	First attempt:
+		for (var i = 0; i < 16; i++) {
+			$("table").append("<tr></tr>");
+			for (var j = 0; j < 16; j++) {
+				$( "tr:nth-child(" + i + ")" ).append("<td>" + j "</td>");
+				}}
+
+	Update:
+	To create the grid using tables, create two for loops, one nested in the other.
+
+	The outer loop creates 16 table row elements. For each pass of the outer loop, the inner loop creates 16 table datum elements and appends them to the just created table row element.
+
+
+2. Leaving a colored trail behind the mouse.
+	Use .hover on the td elements, then add a class that includes a change in color.
+
+3. Clear grid
+	On click of button, call .empty method on table.
+
+4. Custom grid
+	Refactor the code for the 16-by-16 grid so that it's placed in a function that takes number of rows and columns.
+
+4.a Why doesn't hover work anymore?
+	Because the td nodes are dynamic, instead of using the .hover method on td selectors, you need to call the .on method on the document.
+
+		(Basically, .hover doesn't work because once you empty the table, the DOM doesn't refresh to see you've added back more td nodes. You must use .on instead.)
+
+4.b Custom grid whose boxes increase or decrease to fit container
+	Change the td elements' height and width to auto. Keep the table element's height and width fixed.
+
+	Boxes will expand or contract to fit the container, regardless of number of rows or columns
+
+5 Random color
+	Found a good solution online.
+
+	Use Math.random to generate a random number between 0 and 1. Multiply this number by 16 million (roughly equal to the number of RGB values).
+
+	Call .toString(16), which will convert this number to a hex value.
+
+	Concatenate with # and pass to .css().
+
+		NOTE: RGB values must be integers, so you need to call Math.floor before .toString.
+
+
+5--problems not yet solved
+	What I've done is generate a new color on every pass as well as increase the opacity of the box on each pass.
+
+	What the question asks, however, is set the random color upon the FIRST pass, then on subsequent passes, only increase the blackness of the color, until, on the 10th pass, the box is completely black.
+
+(June 30)
+	I need to figure out how to 
+		1) check if a color is already set
+		2) increase the blackness of the color
+
+(July 1)
+	A couple problems:
+		1) .css('background-color') returns a string, but not the hex value. It returns 'rgb(#, #, #)'! Which means I need to break this string down, change the values, then pass it again.
+
+		2) The wording of the problem is not helpful. If you increased the darkness by 10% each pass, it would take roughly 30 passes to get essentially darkness.
+
+		If you increased darkness by about 20% each pass, it would take 10 turns to get approximate darkness.
+
+			Instead, I think what the author really wants is for you to reduce each RGB value by 25 each pass, until we have #000.
+
+			But of course, that means some boxes will be black far before 10 passes.
+
+			OR, there could be some helpful function that works like opacity, except darkens the color! That would be great.
+
+			UPDATE: LOL! There is a css property that does this! And it's called filter.
+
+			UPDATE UPDATE: The filter property isn't as nice as I thought. I think I need to set a data value of 100 for each td, then subtract 10 from it for each mouseover, and pass the difference to .filter.
+
+(July 6)
+	Figured out how to "add" black to colors. Set attribute data-brightness="100" for each element. For each click, subtract 10 from this, pass to .css('webkitFilter',), and update data-brightness.
+
+	For mozilla, need to use .css('-moz-filter').
+
+	Could've made the solution more elegant. Also, could change it so it doesn't randomize the color on every pass as brightness decreases, but, at this point, I'm satisfied.
